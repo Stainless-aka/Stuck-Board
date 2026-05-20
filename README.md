@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stuck Board
 
-## Getting Started
+A developer discussion board for posting and solving programming errors. When you're stuck on a bug, paste your error message and code snippet, and let the community help you get unstuck.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## What it does
+
+Stuck Board is a focused Q&A board built around a single workflow: **post your error → get answers → mark it resolved.**
+
+### Feed (Board)
+
+- Browse all posts sorted by **Latest**, **Top** (most liked), or switch to the **Comments** tab to see a flat feed of every comment across all posts
+- Filter by **programming language**, **status** (open / resolved), or **search** by title, error message, or author
+- Each post card shows the title, language badge, error message snippet, author, date/time, comment count, and like count
+
+### Posting a question
+
+Every post captures:
+- **Title** — a short description of what you're stuck on
+- **Language** — the programming language or tool involved
+- **Error message** — the exact error output, displayed in a red monospace block
+- **Code snippet** — optional, rendered in a dark code block with the language label
+
+### Post detail
+
+- Full error message and code snippet displayed in styled blocks
+- **Like** the post if you found it helpful
+- **Comments** with per-comment likes, author, and timestamp
+- Post authors can **edit**, **delete**, or **mark as resolved / unresolved**
+
+### Auth
+
+- Sign up with a username and password
+- Sessions are stored in a secure, signed HTTP-only cookie
+- Passwords are hashed with `scrypt`
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Framework | [Next.js 16](https://nextjs.org) (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| Auth | Custom — `scrypt` password hashing, HMAC-signed session cookies |
+| Data | In-memory store (survives hot reloads via `globalThis`) |
+| Runtime | Node.js |
+
+> **Note:** Data is stored in memory and resets on server restart. To persist data across restarts, swap the in-memory store in `lib/db.ts` for a database (SQLite, Postgres, etc.).
+
+---
+
+## Project structure
+
+```
+app/
+  page.tsx              # Login
+  signup/               # Sign up
+  board/                # Feed with sort, filter, search
+  post/[id]/            # Post detail
+  post/[id]/edit/       # Edit post
+
+components/
+  auth/                 # LoginForm, SignupForm
+  board/                # PostCard, NewPostForm, BoardFilter, LogoutButton
+  post/                 # CommentForm, EditPostForm, DeletePostButton,
+                        # ResolveButton, LikeButton
+  ui/                   # SubmitButton
+
+lib/
+  db.ts                 # In-memory data store + types
+  session.ts            # Cookie session management
+  crypto.ts             # Password hashing + token signing
+  actions/
+    auth.ts             # signup, login, logout
+    posts.ts            # createPost, updatePost, deletePost,
+                        # resolvePost, addComment, togglePostLike,
+                        # toggleCommentLike
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000), create an account, and start posting.
